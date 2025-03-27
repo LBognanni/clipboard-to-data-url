@@ -1,0 +1,5 @@
+# Clipboard to Data-url
+
+This is a simple script that converts the clipboard content to a data-url.
+Simply copy an image, paste it on this page, and it will be converted to a data-url.
+
