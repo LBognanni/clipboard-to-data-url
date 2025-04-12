@@ -30,10 +30,17 @@
             margin-bottom: 1.5rem;
             transition: all 0.3s ease;
             cursor: pointer;
+            background-color: #fff;
         }
         .drop-zone:hover {
             border-color: #666;
             background-color: #f9f9f9;
+        }
+        .drop-zone.dragover {
+            border-color: #007bff;
+            background-color: #e6f2ff;
+            border-width: 3px;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
         }
         .preview-container {
             margin-top: 2rem;
@@ -75,6 +82,7 @@
         <h1>Clipboard to Data-url</h1>
         <div class="drop-zone" id="dropZone">
             <p>Paste an image here (Ctrl+V or Cmd+V)</p>
+            <p>Or drag and drop a file</p>
         </div>
         <div class="preview-container" id="previewContainer" style="display: none;">
             <img class="preview-image" id="previewImage" alt="Preview">
@@ -129,16 +137,16 @@
         // Handle drag and drop
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.style.borderColor = '#666';
+            dropZone.classList.add('dragover');
         });
 
         dropZone.addEventListener('dragleave', () => {
-            dropZone.style.borderColor = '#ccc';
+            dropZone.classList.remove('dragover');
         });
 
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.style.borderColor = '#ccc';
+            dropZone.classList.remove('dragover');
             
             const files = e.dataTransfer.files;
             if (files.length > 0 && files[0].type.startsWith('image/')) {
