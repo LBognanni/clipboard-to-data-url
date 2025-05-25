@@ -98,6 +98,40 @@
         const dataUrlElement = document.getElementById('dataUrl');
         const copyButton = document.getElementById('copyButton');
 
+        function encodeSvg(svgText) {
+            // Encode SVG text to be used in a data URL
+            return svgText
+                .replace(/'/g, '%27')
+                .replace(/\r/g, '')
+                .replace(/\n/g, '');
+        }
+
+        // Process image file and display as data URL
+        function processImageFile(file) {
+            if (file.type === 'image/svg+xml') {
+                // Handle SVG files without base64 encoding
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const svgText = e.target.result;
+                    const dataUrl = 'data:image/svg+xml,' + encodeSvg(svgText);
+                    previewImage.src = dataUrl;
+                    dataUrlElement.textContent = dataUrl;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsText(file);
+            } else {
+                // Handle other image types with base64 encoding
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    previewImage.src = dataUrl;
+                    dataUrlElement.textContent = dataUrl;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         // Handle paste events
         document.addEventListener('paste', (e) => {
             const items = e.clipboardData.items;
@@ -105,16 +139,7 @@
             for (let item of items) {
                 if (item.type.indexOf('image') !== -1) {
                     const blob = item.getAsFile();
-                    const reader = new FileReader();
-                    
-                    reader.onload = (e) => {
-                        const dataUrl = e.target.result;
-                        previewImage.src = dataUrl;
-                        dataUrlElement.textContent = dataUrl;
-                        previewContainer.style.display = 'block';
-                    };
-                    
-                    reader.readAsDataURL(blob);
+                    processImageFile(blob);
                     break;
                 }
             }
@@ -150,16 +175,9 @@
             
             const files = e.dataTransfer.files;
             if (files.length > 0 && files[0].type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const dataUrl = e.target.result;
-                    previewImage.src = dataUrl;
-                    dataUrlElement.textContent = dataUrl;
-                    previewContainer.style.display = 'block';
-                };
-                reader.readAsDataURL(files[0]);
+                processImageFile(files[0]);
             }
         });
     </script>
 </body>
-</html> 
+</html>
